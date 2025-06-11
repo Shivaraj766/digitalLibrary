@@ -1,24 +1,30 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+// server.js
+const express = require("express");
+const cors    = require("cors");
+const app     = express();
+const PORT    = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 
-// Load local JSON
-const syllabusData = require('./syllabus.json');
+const syllabusData = require("./syllabus.json");
 
-// Routes
-app.get('/api/syllabus', (req, res) => {
-  res.json(syllabusData);
+app.get("/api/syllabus/:branch/:year/:sem", (req, res) => {
+  const { branch } = req.params;
+  const year = req.params.year.replace(/\D/g, ""); // "year1" → "1"
+  const sem  = req.params.sem .replace(/\D/g, ""); // "sem1"  → "1"
+
+  const subjects = syllabusData?.[branch]?.[year]?.[sem] || [];
+
+  if (!subjects.length) {
+    return res.status(404).json({ error: "No subjects found for that path" });
+  }
+  res.json(subjects);
 });
 
-app.get('/', (req, res) => {
-  res.send("📚 Digital Library API is running!");
-});
+app.get("/", (_, res) =>
+  res.send("📚 Digital-Library API up — try /api/syllabus/cse/year1/sem1")
+);
 
-// Use Render-assigned port
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);
