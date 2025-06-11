@@ -1,25 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// Middleware
 app.use(cors());
 
-// Load syllabus data from local JSON file
+// Load local JSON
 const syllabusData = require('./syllabus.json');
 
-// API route to send syllabus JSON
+// Routes
 app.get('/api/syllabus', (req, res) => {
   res.json(syllabusData);
 });
 
-// Optional root route to confirm it's working
 app.get('/', (req, res) => {
-  res.send('📚 Digital Library API is running!');
+  res.send("📚 Digital Library API is running!");
 });
 
-// Start the server
+// Use Render-assigned port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
